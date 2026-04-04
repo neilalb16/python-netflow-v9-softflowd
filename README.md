@@ -69,20 +69,20 @@ The test files contain tests for all use cases in the library, based on real sof
 
   1. Run tcpdump/Wireshark on your public-facing interface (with tcpdump, save the pcap to disk).
   2. Produce some sample flows, e.g. surf the web and refresh your mail client. With Wireshark, save the captured packets to disk.
-  4. Run tcpdump/Wireshark again on a local interface.
+  3. Run tcpdump/Wireshark again on a local interface.
   4. Run `softflowd` with the `-r <pcap_file>` flag. softflowd reads the captured traffic, produces the flows and exports them. Use the interface you are capturing packets on to send the exports to. E.g. capture on the localhost interface (with `-i lo` or on loopback) and then let softflowd export to `127.0.0.1:1337`.
   5. Examine the captured traffic. Use Wireshark and set the `CFLOW` "decode as" dissector on the export packets (e.g. based on the port). The `data` fields should then be shown correctly as Netflow payload.
   6. Extract this payload as hex stream. Anonymize the IP addresses with a hex editor if necessary. A recommended hex editor is [bless](https://github.com/afrantzis/bless).
 
 Second, a Docker way:
 
-  2. Run a softflowd daemon in the background inside a Docker container, listening on `eth0` and exporting to e.g. `172.17.0.1:1337`.
-  3. On your host start Wireshark to listen on the Docker bridge.
-  4. Create some traffic from inside the container.
-  5. Check the softflow daemon with `softflowctl dump-flows`.
-  6. If you have some flows shown to you, export them with `softflowctl expire-all`.
-  7. Your Wireshark should have picked up the epxort packets (it does not matter if there's a port unreachable error).
-  8. Set the decoder for the packets to `CFLOW` and copy the hex value from the NetFlow packet.
+  1. Run a softflowd daemon in the background inside a Docker container, listening on `eth0` and exporting to e.g. `172.17.0.1:1337`.
+  2. On your host start Wireshark to listen on the Docker bridge.
+  3. Create some traffic from inside the container.
+  4. Check the softflow daemon with `softflowctl dump-flows`.
+  5. If you have some flows shown to you, export them with `softflowctl expire-all`.
+  6. Your Wireshark should have picked up the export packets (it does not matter if there's a port unreachable error).
+  7. Set the decoder for the packets to `CFLOW` and copy the hex value from the NetFlow packet.
 
 Your exported hex string should begin with `0001`, `0005`, `0009` or `000a`, depending on the version.
 
